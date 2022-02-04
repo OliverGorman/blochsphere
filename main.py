@@ -14,18 +14,20 @@ class Axis:
     def __init__(self, axis:typing.Tuple[float, float, float], label:str):
         axis = vp.vec(*axis)
         self.arrow = vp.arrow(pos=vp.vec(0,0,0), axis=axis, color=vp.color.white, shaftwidth=0.02, round=False)
-        self.text = vp.text(text=label, pos=axis, align="center", height=0.15, billboard=True)
+        self.text = vp.text(text=label, pos=axis, align="center", height=0.15, billboard=False)
 
 class Spin:
 
     def __init__(self, time:Time):
-        self.state = vp.vec(0,1,0)  # x,z,y in qubit coords
-        self.angular_speed = np.array([0,0,0])   # x,z,y in qubit coords
+        self.state = vp.vec(0,0,1)
+        self.angular_speed = np.array([0,0,0]) 
         self.time = time
         self.arrow = vp.arrow(pos=vp.vec(0,0,0), axis=self.state, shaftwidth=0.05, color=vp.color.green)
 
     def _redraw(self):
-        self.arrow.axis = self.state
+        self.arrow.axis.x = self.state.y
+        self.arrow.axis.y = self.state.z
+        self.arrow.axis.z = self.state.x
 
     def rotate_x(self):
         self.angular_speed[0] = 1
@@ -69,12 +71,12 @@ class KeyDown:
 
 def main():
     
-    s = vp.sphere(opacity=0.2, radius=1, emissive=True)
+    s = vp.sphere(opacity=0.2, radius=1, emissive=False)
     up_label   = vp.text(text="|0>", align="center", height=0.2, pos=vp.vec(0,1+0.3,0))
     down_label = vp.text(text="|1>", align="center", height=0.2, pos=vp.vec(0,-1-0.2-0.3,0))
 
-    x_arrow = Axis((1,0,0), "x")
-    y_arrow = Axis((0,0,1), "y")
+    x_arrow = Axis((0,0,1), "x")
+    y_arrow = Axis((1,0,0), "y")
     z_arrow = Axis((0,1,0), "z")
 
     time = Time(0.1)
